@@ -565,6 +565,7 @@ uint64_t sol_try_find_program_address(
 /**
  * Internal cross-program invocation function
  */
+__attribute__(( weak ))
 uint64_t sol_invoke_signed_c(
   const SolInstruction *instruction,
   const SolAccountInfo *account_infos,
