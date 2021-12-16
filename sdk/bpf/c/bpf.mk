@@ -14,6 +14,12 @@ TEST_PREFIX ?= test_
 OUT_DIR ?= ./out
 OS := $(shell uname)
 
+ifeq ($(V),1)
+TEST_FLAGS ?= --verbose
+else
+TEST_FLAGS ?=
+endif
+
 LLVM_DIR = $(LOCAL_PATH)../dependencies/bpf-tools/llvm
 LLVM_SYSTEM_INC_DIRS := $(LLVM_DIR)/lib/clang/12.0.1/include
 COMPILER_RT_DIR = $(LOCAL_PATH)../dependencies/bpf-tools/rust/lib/rustlib/bpfel-unknown-unknown/lib
@@ -33,6 +39,9 @@ SYSTEM_INC_DIRS := \
   $(LLVM_SYSTEM_INC_DIRS) \
 
 C_FLAGS := \
+  -Wall \
+  -Wextra \
+  -Wconversion \
   -Werror \
   -O2 \
   -fno-builtin \
@@ -62,6 +71,7 @@ BPF_CXX_FLAGS := \
   -march=bpfel+solana
 
 BPF_LLD_FLAGS := \
+  -z defs \
   -z notext \
   -shared \
   --Bdynamic \
@@ -232,7 +242,7 @@ endef
 define TEST_EXEC_RULE
 $1: $2
 	LD_LIBRARY_PATH=$(TESTFRAMEWORK_RPATH) \
-	$2$(\n)
+	$2 $(TEST_FLAGS)$(\n)
 endef
 
 .PHONY: $(INSTALL_SH)
