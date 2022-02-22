@@ -20,6 +20,15 @@ else
 TEST_FLAGS ?=
 endif
 
+ifeq ($(DEBUG),1)
+C_OPT_FLAGS := -O0
+C_DBG_FLAGS := -UNDEBUG
+else
+C_OPT_FLAGS := -O2
+C_DBG_FLAGS := -DNDEBUG
+endif
+C_EXT_FLAGS :=
+
 LLVM_DIR = $(LOCAL_PATH)../dependencies/bpf-tools/llvm
 LLVM_SYSTEM_INC_DIRS := $(LLVM_DIR)/lib/clang/12.0.1/include
 COMPILER_RT_DIR = $(LOCAL_PATH)../dependencies/bpf-tools/rust/lib/rustlib/bpfel-unknown-unknown/lib
@@ -41,9 +50,11 @@ C_FLAGS := \
   -Wextra \
   -Wconversion \
   -Werror \
-  -O2 \
   -fno-builtin \
   -std=c17 \
+  $(C_OPT_FLAGS) \
+  $(C_DBG_FLAGS) \
+  $(C_EXT_FLAGS) \
   $(addprefix -isystem,$(SYSTEM_INC_DIRS)) \
   $(addprefix -I,$(INC_DIRS))
 
